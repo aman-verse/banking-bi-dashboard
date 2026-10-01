@@ -275,7 +275,7 @@ if not monthly_df.empty:
             margin=dict(l=20, r=20, t=40, b=20),
             hovermode="x unified"
         )
-        st.plotly_chart(fig_trend_val, use_container_width=True)
+        st.plotly_chart(fig_trend_val, width="stretch")
 
     with col_t2:
         fig_trend_cnt = px.bar(
@@ -290,7 +290,7 @@ if not monthly_df.empty:
             plot_bgcolor="white",
             margin=dict(l=20, r=20, t=40, b=20)
         )
-        st.plotly_chart(fig_trend_cnt, use_container_width=True)
+        st.plotly_chart(fig_trend_cnt, width="stretch")
 else:
     st.info("No transactions match the selected filters.")
 
@@ -323,7 +323,7 @@ else:
             )
             fig_type.update_traces(texttemplate='₹%{text:.2s}', textposition='outside')
             fig_type.update_layout(showlegend=False, plot_bgcolor="white", margin=dict(l=10, r=10, t=40, b=10))
-            st.plotly_chart(fig_type, use_container_width=True)
+            st.plotly_chart(fig_type, width="stretch")
         else:
             st.write("No type data.")
 
@@ -338,7 +338,7 @@ else:
                 color_discrete_sequence=["#2563EB", "#059669", "#D97706", "#7C3AED"]
             )
             fig_channel.update_layout(margin=dict(l=10, r=10, t=40, b=10))
-            st.plotly_chart(fig_channel, use_container_width=True)
+            st.plotly_chart(fig_channel, width="stretch")
         else:
             st.write("No channel data.")
 
@@ -355,7 +355,7 @@ else:
                 color_discrete_map=status_colors
             )
             fig_status.update_layout(margin=dict(l=10, r=10, t=40, b=10))
-            st.plotly_chart(fig_status, use_container_width=True)
+            st.plotly_chart(fig_status, width="stretch")
         else:
             st.write("No status data.")
 
@@ -391,7 +391,7 @@ else:
                 coloraxis_showscale=False,
                 margin=dict(l=20, r=20, t=40, b=20)
             )
-            st.plotly_chart(fig_branch, use_container_width=True)
+            st.plotly_chart(fig_branch, width="stretch")
         else:
             st.info("No branch data available for selected filters.")
 
@@ -411,7 +411,7 @@ else:
                 coloraxis_showscale=False,
                 margin=dict(l=20, r=20, t=40, b=20)
             )
-            st.plotly_chart(fig_city, use_container_width=True)
+            st.plotly_chart(fig_city, width="stretch")
         else:
             st.info("No city data available for selected filters.")
 
@@ -482,7 +482,7 @@ else:
                 hole=0.4
             )
             fig_seg.update_layout(margin=dict(l=10, r=10, t=40, b=10))
-            st.plotly_chart(fig_seg, use_container_width=True)
+            st.plotly_chart(fig_seg, width="stretch")
 
 
 # -----------------------------------------------------------------------------
