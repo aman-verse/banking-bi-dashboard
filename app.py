@@ -83,6 +83,10 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
+if not os.path.exists(DB_PATH) or os.path.getsize(DB_PATH) == 0:
+    from src.database import main as init_db_main
+    init_db_main()
+
 @st.cache_data(show_spinner="Loading banking database records...")
 def get_data(db_mtime):
     return load_raw_tables()
@@ -91,7 +95,7 @@ try:
     db_mtime = os.path.getmtime(DB_PATH) if os.path.exists(DB_PATH) else 0
     all_customers, all_transactions = get_data(db_mtime)
 except Exception as e:
-    st.error(f"Error loading database. Please ensure SQLite database exists. Details: {e}")
+    st.error(f"Error loading database. Details: {e}")
     st.stop()
 
 
