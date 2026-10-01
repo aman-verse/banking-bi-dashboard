@@ -1,62 +1,36 @@
--- ==============================================================================
 -- Banking Customer & Transaction Analytics Dashboard
--- Core Analytical SQL Queries
--- Database: SQLite
--- ==============================================================================
+-- Core Analytical SQL Queries (SQLite)
 
--- ------------------------------------------------------------------------------
--- Query 1: Total Transaction Value (Overall Volume in Currency)
--- Used In: KPI Cards (Main Dashboard Header)
--- ------------------------------------------------------------------------------
+-- Query 1: Total Transaction Value
 SELECT 
     ROUND(SUM(amount), 2) AS total_transaction_value
 FROM transactions
 WHERE transaction_status = 'Success';
 
-
--- ------------------------------------------------------------------------------
 -- Query 2: Total Transaction Count
--- Used In: KPI Cards (Main Dashboard Header)
--- ------------------------------------------------------------------------------
 SELECT 
     COUNT(*) AS total_transactions
 FROM transactions;
 
-
--- ------------------------------------------------------------------------------
 -- Query 3: Successful Transaction Count
--- Used In: KPI Cards & Success/Failure Overview
--- ------------------------------------------------------------------------------
 SELECT 
     COUNT(*) AS successful_transactions
 FROM transactions
 WHERE transaction_status = 'Success';
 
-
--- ------------------------------------------------------------------------------
 -- Query 4: Failed Transaction Count
--- Used In: Risk / Operations Monitoring
--- ------------------------------------------------------------------------------
 SELECT 
     COUNT(*) AS failed_transactions
 FROM transactions
 WHERE transaction_status = 'Failed';
 
-
--- ------------------------------------------------------------------------------
--- Query 5: Average Transaction Value (Ticket Size)
--- Used In: KPI Cards
--- ------------------------------------------------------------------------------
+-- Query 5: Average Transaction Value
 SELECT 
     ROUND(AVG(amount), 2) AS avg_transaction_value
 FROM transactions
 WHERE transaction_status = 'Success';
 
-
--- ------------------------------------------------------------------------------
 -- Query 6: Monthly Transaction Value & Volume Trend
--- Used In: Section 1 - Transaction Overview (Trend Line / Bar Chart)
--- ------------------------------------------------------------------------------
 SELECT 
     strftime('%Y-%m', transaction_date) AS month,
     COUNT(*) AS total_transactions,
@@ -66,11 +40,7 @@ FROM transactions
 GROUP BY month
 ORDER BY month ASC;
 
-
--- ------------------------------------------------------------------------------
 -- Query 7: Transaction Value & Count by Transaction Type
--- Used In: Section 2 - Transaction Analysis (UPI, Card, ATM, NEFT, IMPS Breakdown)
--- ------------------------------------------------------------------------------
 SELECT 
     transaction_type,
     COUNT(*) AS txn_count,
@@ -82,11 +52,7 @@ WHERE transaction_status = 'Success'
 GROUP BY transaction_type
 ORDER BY total_amount DESC;
 
-
--- ------------------------------------------------------------------------------
 -- Query 8: Transaction Value by Branch
--- Used In: Section 3 - Branch / Location Analysis
--- ------------------------------------------------------------------------------
 SELECT 
     branch,
     COUNT(*) AS transaction_count,
@@ -97,11 +63,7 @@ WHERE transaction_status = 'Success'
 GROUP BY branch
 ORDER BY total_branch_value DESC;
 
-
--- ------------------------------------------------------------------------------
 -- Query 9: Top 10 Customers by Transaction Value
--- Used In: Section 4 - Customer Analysis (High-Net-Worth Identification Table)
--- ------------------------------------------------------------------------------
 SELECT 
     c.customer_id,
     c.city,
@@ -116,11 +78,7 @@ GROUP BY c.customer_id, c.city, c.occupation, c.account_type
 ORDER BY total_spend DESC
 LIMIT 10;
 
-
--- ------------------------------------------------------------------------------
 -- Query 10: Customer Activity (Distribution of Transactions per Customer)
--- Used In: Section 4 - Customer Activity Analysis
--- ------------------------------------------------------------------------------
 SELECT 
     c.customer_id,
     c.city,
@@ -133,12 +91,7 @@ LEFT JOIN transactions t ON c.customer_id = t.customer_id
 GROUP BY c.customer_id, c.city, c.account_type
 ORDER BY transaction_count DESC;
 
-
--- ------------------------------------------------------------------------------
 -- Query 11: Number of Active vs Inactive Customers
--- Active defined as having at least one successful transaction in the database period
--- Used In: KPI Cards & Customer Segmentation Overview
--- ------------------------------------------------------------------------------
 SELECT 
     COUNT(DISTINCT customer_id) AS active_customers,
     (SELECT COUNT(*) FROM customers) - COUNT(DISTINCT customer_id) AS inactive_customers,
@@ -146,11 +99,7 @@ SELECT
 FROM transactions
 WHERE transaction_status = 'Success';
 
-
--- ------------------------------------------------------------------------------
 -- Query 12: Failed Transaction Rate by Channel
--- Used In: Operational Health & Risk Insights
--- ------------------------------------------------------------------------------
 SELECT 
     channel,
     COUNT(*) AS total_transactions,
@@ -161,11 +110,7 @@ FROM transactions
 GROUP BY channel
 ORDER BY failure_rate_pct DESC;
 
-
--- ------------------------------------------------------------------------------
 -- Query 13: Transactions by Channel Distribution
--- Used In: Section 2 - Channel Distribution Donut/Bar Chart
--- ------------------------------------------------------------------------------
 SELECT 
     channel,
     COUNT(*) AS txn_count,
@@ -175,11 +120,7 @@ FROM transactions
 GROUP BY channel
 ORDER BY txn_count DESC;
 
-
--- ------------------------------------------------------------------------------
 -- Query 14: City-wise Customer Distribution & Account Penetration
--- Used In: Section 3 - Geographic Customer Reach
--- ------------------------------------------------------------------------------
 SELECT 
     city,
     COUNT(*) AS total_customers,

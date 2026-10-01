@@ -1,10 +1,6 @@
 """
 Banking Customer & Transaction Analytics Dashboard
 Dynamic Business Insights Generator
-
-Generates transparent, data-supported business observations based strictly
-on current filtered transactions and customer data. No unverified business
-claims, fake ROI predictions, or speculative assertions.
 """
 
 import pandas as pd
@@ -28,9 +24,7 @@ def generate_business_insights(filtered_custs: pd.DataFrame, filtered_txns: pd.D
     total_count = len(filtered_txns)
     successful_txns = filtered_txns[filtered_txns["transaction_status"] == "Success"]
 
-    # -------------------------------------------------------------------------
     # 1. Dominant Payment Channel / Instrument
-    # -------------------------------------------------------------------------
     type_counts = filtered_txns["transaction_type"].value_counts()
     if not type_counts.empty:
         top_type = type_counts.index[0]
@@ -44,9 +38,7 @@ def generate_business_insights(filtered_custs: pd.DataFrame, filtered_txns: pd.D
             )
         })
 
-    # -------------------------------------------------------------------------
-    # 2. Branch Transaction Value Performance (Strictly Transaction Value, NOT Revenue)
-    # -------------------------------------------------------------------------
+    # 2. Branch Transaction Value Performance
     if not successful_txns.empty:
         branch_values = successful_txns.groupby("branch")["amount"].sum()
         if not branch_values.empty:
@@ -64,9 +56,7 @@ def generate_business_insights(filtered_custs: pd.DataFrame, filtered_txns: pd.D
                 )
             })
 
-    # -------------------------------------------------------------------------
-    # 3. Channel Failure Rate (Descriptive Observation, NOT Formal Risk Assessment)
-    # -------------------------------------------------------------------------
+    # 3. Channel Failure Rate
     channel_groups = filtered_txns.groupby("channel")
     channel_fail_rates = {}
     for ch, grp in channel_groups:
@@ -89,9 +79,7 @@ def generate_business_insights(filtered_custs: pd.DataFrame, filtered_txns: pd.D
             )
         })
 
-    # -------------------------------------------------------------------------
     # 4. Customer Spending Concentration
-    # -------------------------------------------------------------------------
     if not seg_summary.empty and "High Value" in seg_summary["segment"].values:
         hv_row = seg_summary[seg_summary["segment"] == "High Value"].iloc[0]
         hv_cust_pct = hv_row.get("pct_of_customers", 0)
@@ -109,9 +97,7 @@ def generate_business_insights(filtered_custs: pd.DataFrame, filtered_txns: pd.D
             )
         })
 
-    # -------------------------------------------------------------------------
-    # 5. Geographic Customer Distribution (Pure Observation, NO Speculative ROI Claims)
-    # -------------------------------------------------------------------------
+    # 5. Geographic Customer Distribution
     if not filtered_custs.empty:
         city_counts = filtered_custs["city"].value_counts()
         top_city = city_counts.index[0]
@@ -125,9 +111,7 @@ def generate_business_insights(filtered_custs: pd.DataFrame, filtered_txns: pd.D
             )
         })
 
-    # -------------------------------------------------------------------------
     # 6. Customer Dormancy
-    # -------------------------------------------------------------------------
     if not seg_summary.empty and "Inactive" in seg_summary["segment"].values:
         inact_row = seg_summary[seg_summary["segment"] == "Inactive"].iloc[0]
         inact_pct = inact_row.get("pct_of_customers", 0)

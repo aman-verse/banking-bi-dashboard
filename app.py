@@ -1,17 +1,9 @@
-"""
-Banking Customer & Transaction Analytics Dashboard
-Streamlit Web Application
-
-An end-to-end interactive Business Intelligence dashboard for banking
-transaction monitoring, customer segmentation, and executive insights.
-"""
-
+import os
+from datetime import datetime
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-import os
-from datetime import datetime
 
 from src.database import DB_PATH
 from src.analytics import (
@@ -30,9 +22,6 @@ from src.analytics import (
 )
 from src.insights import generate_business_insights
 
-# -----------------------------------------------------------------------------
-# Streamlit Page Configuration
-# -----------------------------------------------------------------------------
 st.set_page_config(
     page_title="Banking Customer & Transaction Analytics Dashboard",
     page_icon="🏦",
@@ -40,7 +29,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for clean, human/student-developed yet polished UI
 st.markdown("""
 <style>
     .main-header {
@@ -95,9 +83,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# -----------------------------------------------------------------------------
-# Data Loading (Cached for performance)
-# -----------------------------------------------------------------------------
 @st.cache_data(show_spinner="Loading banking database records...")
 def get_data(db_mtime):
     return load_raw_tables()
@@ -110,14 +95,11 @@ except Exception as e:
     st.stop()
 
 
-# -----------------------------------------------------------------------------
 # Sidebar: Filter Controls
-# -----------------------------------------------------------------------------
 st.sidebar.image("https://img.icons8.com/fluency/96/bank-building.png", width=64)
 st.sidebar.title("Dashboard Filters")
 st.sidebar.markdown("Filter transaction activity and customer scope:")
 
-# 1. Date Range Filter
 min_date = all_transactions["transaction_date"].min().date()
 max_date = all_transactions["transaction_date"].max().date()
 
@@ -134,11 +116,9 @@ if isinstance(date_range, tuple) and len(date_range) == 2:
 else:
     start_filter, end_filter = min_date, max_date
 
-# 2. City Filter
 city_options = sorted(all_customers["city"].unique().tolist())
 selected_cities = st.sidebar.multiselect("City", options=city_options, default=[], placeholder="All Cities")
 
-# 3. Branch Filter (Dependent on selected cities)
 if selected_cities:
     city_cust_ids = set(all_customers[all_customers["city"].isin(selected_cities)]["customer_id"])
     branch_options = sorted(all_transactions[all_transactions["customer_id"].isin(city_cust_ids)]["branch"].unique().tolist())
@@ -147,19 +127,15 @@ else:
 
 selected_branches = st.sidebar.multiselect("Branch", options=branch_options, default=[], placeholder="All Branches")
 
-# 4. Transaction Type Filter
 type_options = sorted(all_transactions["transaction_type"].unique().tolist())
 selected_types = st.sidebar.multiselect("Transaction Type", options=type_options, default=[], placeholder="All Types (UPI, Card...)")
 
-# 5. Transaction Status Filter
 status_options = sorted(all_transactions["transaction_status"].unique().tolist())
 selected_statuses = st.sidebar.multiselect("Transaction Status", options=status_options, default=[], placeholder="All Statuses")
 
-# 6. Channel Filter
 channel_options = sorted(all_transactions["channel"].unique().tolist())
 selected_channels = st.sidebar.multiselect("Channel", options=channel_options, default=[], placeholder="All Channels")
 
-# Reset button indicator
 if st.sidebar.button("Reset All Filters", width="stretch"):
     st.rerun()
 
@@ -167,9 +143,7 @@ st.sidebar.markdown("---")
 st.sidebar.caption("Portfolio Project: Banking BI Analytics")
 
 
-# -----------------------------------------------------------------------------
-# Apply Filters to Data
-# -----------------------------------------------------------------------------
+# Apply Filters
 filtered_custs, filtered_txns = apply_filters(
     customers_df=all_customers,
     transactions_df=all_transactions,
@@ -186,16 +160,12 @@ kpis = calculate_kpis(filtered_custs, filtered_txns)
 segmented_custs, segment_summary = segment_customers(filtered_custs, filtered_txns)
 
 
-# -----------------------------------------------------------------------------
 # Main Header
-# -----------------------------------------------------------------------------
 st.markdown('<div class="main-header">Banking Customer & Transaction Analytics Dashboard</div>', unsafe_allow_html=True)
 st.markdown('<div class="sub-header">Interactive analysis of customer behavior, channel adoption, branch volumes, and operational KPIs</div>', unsafe_allow_html=True)
 
 
-# -----------------------------------------------------------------------------
-# Top Executive KPI Metric Cards
-# -----------------------------------------------------------------------------
+# Top KPI Metric Cards
 if filtered_txns.empty:
     st.warning("No transactions match the selected filters. Please adjust your date range or filter criteria.")
 
@@ -251,9 +221,7 @@ with kpi_col6:
 st.markdown("---")
 
 
-# -----------------------------------------------------------------------------
-# Section 1: Transaction Overview
-# -----------------------------------------------------------------------------
+# 1. Transaction Overview
 st.subheader("1. Transaction Overview")
 monthly_df = get_monthly_trends(filtered_txns)
 
@@ -295,9 +263,7 @@ else:
     st.info("No transactions match the selected filters.")
 
 
-# -----------------------------------------------------------------------------
-# Section 2: Transaction Analysis
-# -----------------------------------------------------------------------------
+# 2. Transaction Analysis
 st.subheader("2. Transaction Analysis")
 
 if filtered_txns.empty:
@@ -360,9 +326,7 @@ else:
             st.write("No status data.")
 
 
-# -----------------------------------------------------------------------------
-# Section 3: Branch / Location Analysis
-# -----------------------------------------------------------------------------
+# 3. Branch / Location Analysis
 st.subheader("3. Branch / Location Analysis")
 
 if filtered_txns.empty and filtered_custs.empty:
@@ -416,9 +380,7 @@ else:
             st.info("No city data available for selected filters.")
 
 
-# -----------------------------------------------------------------------------
-# Section 4: Customer Analysis & Segmentation
-# -----------------------------------------------------------------------------
+# 4. Customer Analysis & Segmentation
 st.subheader("4. Customer Analysis & Segmentation")
 
 if filtered_txns.empty:
@@ -485,9 +447,7 @@ else:
             st.plotly_chart(fig_seg, width="stretch")
 
 
-# -----------------------------------------------------------------------------
-# Section 5: Business Insights
-# -----------------------------------------------------------------------------
+# 5. Business Insights
 st.subheader("5. Business Insights")
 st.markdown("Key observations from the selected data.")
 
@@ -503,9 +463,7 @@ for ins in insights_list:
     """, unsafe_allow_html=True)
 
 
-# -----------------------------------------------------------------------------
 # Footer
-# -----------------------------------------------------------------------------
 st.markdown("---")
 f_col1, f_col2 = st.columns([3, 1])
 with f_col1:

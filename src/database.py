@@ -1,12 +1,6 @@
 """
 Banking Customer & Transaction Analytics Dashboard
 SQLite Database Manager
-
-Responsibilities:
-- Initializes SQLite database schema with primary and foreign key constraints
-- Loads cleaned CSV datasets into SQLite tables
-- Builds analytical indexes for high performance
-- Executes database health checks and sample analytical queries
 """
 
 import os
@@ -29,11 +23,9 @@ def init_database(conn):
     """Creates the customers and transactions tables with appropriate constraints."""
     cursor = conn.cursor()
 
-    # Drop existing tables if re-initializing
     cursor.execute("DROP TABLE IF EXISTS transactions;")
     cursor.execute("DROP TABLE IF EXISTS customers;")
 
-    # Customers table DDL
     cursor.execute("""
     CREATE TABLE customers (
         customer_id TEXT PRIMARY KEY,
@@ -46,7 +38,6 @@ def init_database(conn):
     );
     """)
 
-    # Transactions table DDL
     cursor.execute("""
     CREATE TABLE transactions (
         transaction_id TEXT PRIMARY KEY,
@@ -61,7 +52,6 @@ def init_database(conn):
     );
     """)
 
-    # Create analytical indexes
     cursor.execute("CREATE INDEX idx_transactions_customer ON transactions(customer_id);")
     cursor.execute("CREATE INDEX idx_transactions_date ON transactions(transaction_date);")
     cursor.execute("CREATE INDEX idx_transactions_type ON transactions(transaction_type);")
@@ -110,7 +100,6 @@ def validate_database(conn):
     cursor.execute("SELECT COUNT(DISTINCT transaction_id) FROM transactions;")
     unique_txns = cursor.fetchone()[0]
 
-    # Verify no foreign key violations
     cursor.execute("""
     SELECT COUNT(*) FROM transactions t 
     LEFT JOIN customers c ON t.customer_id = c.customer_id 
@@ -118,16 +107,8 @@ def validate_database(conn):
     """)
     fk_violations = cursor.fetchone()[0]
 
-    print("\n" + "=" * 50)
-    print("DATABASE VALIDATION REPORT")
-    print("=" * 50)
-    print(f"Total Customers:               {cust_count:,}")
-    print(f"Unique Customer IDs:           {unique_custs:,}")
-    print(f"Total Transactions:            {txn_count:,}")
-    print(f"Unique Transaction IDs:        {unique_txns:,}")
-    print(f"Foreign Key Violations:        {fk_violations}")
-    print("Validation Status:             [PASSED]" if fk_violations == 0 and cust_count == unique_custs else "[FAILED]")
-    print("=" * 50 + "\n")
+    status = "PASSED" if fk_violations == 0 and cust_count == unique_custs else "FAILED"
+    print(f"Database Validation [{status}]: {cust_count:,} customers, {txn_count:,} transactions, {fk_violations} FK violations.")
 
 
 def execute_query(sql_query, params=None, db_path=DB_PATH):
