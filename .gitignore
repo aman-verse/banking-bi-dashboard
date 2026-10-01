@@ -1,0 +1,19 @@
+# Environment and secrets
+.env
+.streamlit/secrets.toml
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+env/
+venv/
+
+# Local databases (recreatable via scripts)
+database/*.db
+
+# OS files
+.DS_Store
+Thumbs.db
