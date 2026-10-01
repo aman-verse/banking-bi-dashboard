@@ -35,7 +35,7 @@ Retail banks process tens of thousands of transactions daily across multiple pay
 - **Data Manipulation**: Pandas, NumPy
 - **Database & Querying**: SQLite, SQL
 - **Dashboard & Visualization**: Streamlit, Plotly Express & Graph Objects
-- **Cloud & Deployment**: Docker, Google Cloud Run, optional Firebase Firestore sync
+- **Cloud & Deployment**: Docker, Google Cloud Run, Streamlit Community Cloud
 - **Version Control**: Git, GitHub
 
 ---
@@ -216,8 +216,7 @@ banking-bi-dashboard/
 ├── INTERVIEW_NOTES.md         # 17 technical interview questions & answers
 ├── .gitignore                 # Secrets and artifact exclusion
 ├── .streamlit/
-│   ├── config.toml            # Theme and styling configuration
-│   └── secrets.toml.example   # Template for cloud credentials
+│   └── config.toml            # Theme and styling configuration
 ├── data/
 │   ├── raw/                   # Raw generated CSV files
 │   │   ├── customers.csv
@@ -234,8 +233,7 @@ banking-bi-dashboard/
     ├── data_cleaning.py       # Pandas cleaning & validation pipeline
     ├── database.py            # SQLite schema, data loader, & health check
     ├── analytics.py           # Metrics, aggregations, & customer segmentation
-    ├── insights.py            # Dynamic data-driven insights engine
-    └── firebase_sync.py       # Optional Firebase Firestore cloud sync
+    └── insights.py            # Dynamic data-driven insights engine
 ```
 
 ---
@@ -286,35 +284,31 @@ banking-bi-dashboard/
 
 ---
 
-## 14. Deployment Architecture & Firebase Integration
+## 14. Deployment Architecture
 
 ### Architecture Reality Check
-Streamlit is an active Python server application that requires a long-running Python process and WebSocket support. **It cannot be hosted as a static site on Firebase Hosting alone.**
+Streamlit is an active Python server application requiring WebSocket support and a running Python process. Because of this, it cannot be hosted as a static website on simple static file hosts.
 
-To integrate with Google Cloud and Firebase honestly:
-- **Application Server**: Deployed on **Google Cloud Run** (or Streamlit Community Cloud) using the included `Dockerfile`.
-- **Cloud Database (Optional)**: **Firebase Firestore** can be used as an auxiliary cloud database via `src/firebase_sync.py`.
-- **Frontend / Custom Domain (Optional)**: Firebase Hosting can act as a reverse-proxy routing requests to the Cloud Run service via `firebase.json` rewrites.
+### Recommended Deployment Options
+1. **Streamlit Community Cloud**:
+   - Push repository to GitHub.
+   - Connect repository directly at [share.streamlit.io](https://share.streamlit.io).
+   - Set entry point to `app.py`.
 
-### Deploying to Google Cloud Run (Recommended)
-1. Build and push the container image:
-   ```bash
-   gcloud builds submit --tag gcr.io/YOUR_PROJECT_ID/banking-dashboard
-   ```
-2. Deploy to Cloud Run:
-   ```bash
-   gcloud run deploy banking-dashboard \
-     --image gcr.io/YOUR_PROJECT_ID/banking-dashboard \
-     --platform managed \
-     --region us-central1 \
-     --allow-unauthenticated \
-     --port 8501
-   ```
-
-### Optional Firebase Firestore Setup
-1. Copy `.streamlit/secrets.toml.example` to `.streamlit/secrets.toml`.
-2. Add your Firebase service account credentials.
-3. Run `python -c "from src.firebase_sync import sync_processed_data_to_firestore; sync_processed_data_to_firestore()"` to sync processed records to Firestore.
+2. **Google Cloud Run (Containerized)**:
+   - Build and submit the container image:
+     ```bash
+     gcloud builds submit --tag gcr.io/YOUR_PROJECT_ID/banking-dashboard
+     ```
+   - Deploy to Cloud Run:
+     ```bash
+     gcloud run deploy banking-dashboard \
+       --image gcr.io/YOUR_PROJECT_ID/banking-dashboard \
+       --platform managed \
+       --region us-central1 \
+       --allow-unauthenticated \
+       --port 8501
+     ```
 
 ---
 

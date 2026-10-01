@@ -160,7 +160,7 @@ channel_options = sorted(all_transactions["channel"].unique().tolist())
 selected_channels = st.sidebar.multiselect("Channel", options=channel_options, default=[], placeholder="All Channels")
 
 # Reset button indicator
-if st.sidebar.button("Reset All Filters", use_container_width=True):
+if st.sidebar.button("Reset All Filters", width="stretch"):
     st.rerun()
 
 st.sidebar.markdown("---")
@@ -434,7 +434,7 @@ else:
                     "total_spend": "₹{:,.2f}",
                     "total_transactions": "{:,}"
                 }),
-                use_container_width=True,
+                width="stretch",
                 hide_index=True
             )
         else:
@@ -461,7 +461,7 @@ else:
                     "pct_of_customers": "{:.1f}%",
                     "avg_frequency": "{:.1f}"
                 }),
-                use_container_width=True,
+                width="stretch",
                 hide_index=True
             )
 
@@ -517,5 +517,5 @@ with f_col2:
         data=csv_data,
         file_name="filtered_banking_transactions.csv",
         mime="text/csv",
-        use_container_width=True
+        width="stretch"
     )
