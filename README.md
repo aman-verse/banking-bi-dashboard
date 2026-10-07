@@ -320,14 +320,4 @@ Streamlit is an active Python server application requiring WebSocket support and
 
 ---
 
-## 16. Resume-Ready Project Entry
 
-```text
-Banking Customer & Transaction Analytics Dashboard
-Python | Pandas | SQL | SQLite | Streamlit | Plotly
-
-• Built an interactive banking analytics dashboard analyzing 5,000 customers and 39,988 transactions across transaction types, channels, branches and locations.
-• Cleaned and transformed customer and transaction data using Pandas and stored structured data in SQLite for analytical querying.
-• Used SQL and Python to calculate transaction KPIs, customer activity, branch performance, transaction success rates and customer segments.
-• Developed an interactive Streamlit dashboard with filters, KPI cards, visualizations and dynamically generated data-driven business insights.
-```
